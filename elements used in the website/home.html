@@ -1,917 +1,119 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ghoomar | Celebrating Rajasthani Heritage</title>
-  <meta name="description" content="Ghoomar is a family of Rajasthani hospitality experiences — One Name. Four Worlds.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="preload" as="image" href="assets/patterns/hawa-mahal-web.jpg" fetchpriority="high">
-  <link rel="icon" type="image/svg+xml" href="assets/logos/ghoomar-mascot.svg">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
-  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
-<style>
-/* ================================================================
-   EXACT ORIGINAL BRAND TOKENS from styles.css
-   ================================================================ */
-:root {
-  --brand-maroon:      #A31C21;
-  --brand-maroon-dark: #7A1418;
-  --brand-cream:       #FDF8E8;
-  --brand-cream-card:  #FFFDF3;
-  --brand-ink:         #2A0E0E;
-  --brand-warm:        #5A3A2A;
-}
-*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-html { scroll-behavior:auto; }
-body {
-  background: radial-gradient(ellipse at 20% 0%, #FFFDF3 0%, var(--brand-cream) 55%), var(--brand-cream);
-  color: var(--brand-ink);
-  font-family: 'Outfit', sans-serif;
-  overflow-x: hidden;
-}
-a { text-decoration:none; color:inherit; }
-img { max-width:100%; display:block; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ghoomar | Celebrating Rajasthani Heritage</title>
+    <meta name="description" content="Ghoomar is a family of Rajasthani hospitality experiences — Ghoomar Traditional Thali, Ghoomar Village, Ghoomar Yatra and Vedanta By Ghoomar.">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/page-colors.css">
 
-/* ================================================================
-   SCENE WRAP — 280vh; sticky portal drives door + zoom
-   ================================================================ */
-#scene-wrap { position:relative; height:280vh; z-index:100; }
-
-/* ================================================================
-   DOOR PORTAL — dark entrance, sticky 100vh
-   ================================================================ */
-#doorPortal {
-  position:sticky; top:0; height:100vh; overflow:hidden;
-  display:flex; flex-direction:column; align-items:center; justify-content:center;
-  z-index:100;
-  background:#1A0408;
-  pointer-events:none;
-}
-
-/* Subtle maroon jali pattern on portal wall */
-.portal-jali {
-  position:absolute; inset:0; z-index:0; opacity:0.06; pointer-events:none;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cpath d='M30 2L58 30L30 58L2 30Z' fill='none' stroke='%23A31C21' stroke-width='0.8'/%3E%3Ccircle cx='30' cy='30' r='4' fill='none' stroke='%23A31C21' stroke-width='0.5'/%3E%3C/svg%3E");
-  background-size:60px 60px;
-}
-
-/* Light seam between doors */
-.gap-light {
-  position:absolute; width:3px; height:66%; z-index:12; pointer-events:none;
-  background:linear-gradient(180deg,transparent 0%,rgba(255,225,130,0.5) 12%,rgba(255,240,160,0.82) 50%,rgba(255,225,130,0.5) 88%,transparent 100%);
-  filter:blur(2.5px);
-  animation:gap-pulse 2.8s ease-in-out infinite alternate;
-}
-@keyframes gap-pulse { from{opacity:.38} to{opacity:1} }
-
-/* ================================================================
-   ZOOM WORLD — cream interior matching original site, revealed as doors open
-   ================================================================ */
-#zoom-world {
-  position:absolute; inset:0; z-index:2; pointer-events:none;
-  transform:scale(0.58) translateZ(0);
-  transform-origin:50% 47%;
-  opacity:0;
-  will-change:transform,opacity;
-}
-/* Solid cream base */
-.zw-base {
-  position:absolute; inset:0;
-  background: radial-gradient(ellipse at 20% 0%, #FFFDF3 0%, var(--brand-cream) 55%), var(--brand-cream);
-}
-/* Hawa Mahal — exact same as original: opacity 0.28, saturate 0.75, contrast 0.9 */
-.zw-bg {
-  position:absolute; inset:-12%;
-  background:url('assets/patterns/hawa-mahal-web.jpg') center top/cover no-repeat;
-  opacity:0.28;
-  filter:saturate(0.75) contrast(0.9);
-}
-/* Exact original master-hero-overlay */
-.zw-overlay {
-  position:absolute; inset:0;
-  background:
-    radial-gradient(ellipse at top, rgba(163,28,33,0.06) 0%, rgba(253,248,232,0) 60%),
-    linear-gradient(180deg, rgba(253,248,232,0) 0%, rgba(253,248,232,0.55) 100%);
-}
-
-/* ---- DYNAMIC MOTION BACKGROUND (canvas-based, inside zoom world) ---- */
-#motionCanvas {
-  position:absolute; inset:0; width:100%; height:100%;
-  opacity:0.12; pointer-events:none; z-index:1;
-}
-
-/* ---- HERO CONTENT — pixel-perfect match to original ---- */
-.zw-content {
-  position:absolute; inset:0; z-index:3;
-  display:flex; flex-direction:column; align-items:center; justify-content:center;
-  text-align:center; padding:40px;
-}
-/* original .master-logo */
-.zw-logo {
-  width:180px; height:auto; margin:0 auto 24px;
-  filter:drop-shadow(0 4px 12px rgba(163,28,33,0.15));
-}
-/* original .master-kicker */
-.zw-kicker {
-  color:var(--brand-maroon);
-  font-size:0.9rem; letter-spacing:4px;
-  text-transform:uppercase; margin-bottom:18px;
-  font-weight:600; opacity:0.85;
-}
-/* original .master-title */
-.zw-title {
-  font-family:'Playfair Display',serif;
-  font-size:clamp(2.4rem,5vw,4.4rem);
-  color:var(--brand-ink);
-  line-height:1.1; margin-bottom:20px;
-  letter-spacing:1px; font-weight:700;
-}
-/* original .master-title span */
-.zw-title .accent {
-  color:var(--brand-maroon);
-  font-style:italic; font-weight:600;
-}
-/* original .master-subtitle */
-.zw-subtitle {
-  color:var(--brand-warm);
-  font-size:1.15rem;
-  max-width:640px; margin:0 auto;
-  font-weight:400; line-height:1.7;
-}
-
-/* ---- TORCHES (kept — they're part of the door, not props on the page) ---- */
-.torch { position:absolute; top:5%; z-index:8; display:flex; flex-direction:column; align-items:center; pointer-events:none; }
-.torch-l{left:3%} .torch-r{right:3%}
-.tf { position:relative; width:22px; height:40px; transform-origin:bottom center; animation:flk-a .14s ease-in-out infinite alternate; }
-.tf::before,.tf::after { content:''; position:absolute; left:50%; transform:translateX(-50%); border-radius:50% 50% 20% 20%; }
-.tf::before { width:16px; height:34px; bottom:0; background:radial-gradient(ellipse at 50% 80%,#FFF4A0 0%,#FFB020 22%,#A31C21 58%,rgba(100,15,0,.4) 100%); filter:blur(1px); animation:flk-b .11s ease-in-out infinite alternate; }
-.tf::after { width:8px; height:20px; bottom:6px; background:radial-gradient(ellipse at 50% 80%,#FFF 0%,#FFF6D0 40%,rgba(255,200,80,.4) 100%); filter:blur(.5px); }
-@keyframes flk-a { 0%{transform:rotate(-4deg) scale(1,1)} 100%{transform:rotate(5deg) scale(.88,1.09)} }
-@keyframes flk-b { 0%{transform:translateX(-50%) scaleX(.88)} 100%{transform:translateX(-50%) scaleX(1.12)} }
-.tg { width:52px; height:52px; margin-top:-16px; background:radial-gradient(circle,rgba(225,110,15,.42) 0%,transparent 70%); filter:blur(8px); animation:flk-glow .14s ease-in-out infinite alternate; }
-@keyframes flk-glow { from{opacity:.55;transform:scale(.88)} to{opacity:1;transform:scale(1.12)} }
-
-/* ---- ARCH UI (logo + greeting above the doors) ---- */
-.arch-frame-ui { position:relative; z-index:8; display:flex; flex-direction:column; align-items:center; pointer-events:none; }
-.portal-greeting {
-  font-family:'Playfair Display',serif; font-size:clamp(.56rem,1.2vw,.76rem);
-  letter-spacing:.44em; text-transform:uppercase;
-  color:rgba(253,248,232,0.48); margin-bottom:10px;
-  animation:fade-drift 2s .4s both;
-}
-.portal-logo {
-  height:44px; margin-bottom:12px;
-  filter:brightness(10) drop-shadow(0 2px 8px rgba(0,0,0,.25));
-  animation:fade-drift 1.6s .1s both;
-}
-@keyframes fade-drift { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
-.scroll-hint-portal {
-  position:absolute; bottom:26px; left:50%; transform:translateX(-50%); z-index:15;
-  display:flex; flex-direction:column; align-items:center; gap:8px; pointer-events:none;
-  animation:fade-drift 1.5s 1.2s both;
-}
-.shp-word { font-size:.58rem; letter-spacing:.32em; text-transform:uppercase; color:rgba(253,248,232,0.46); font-weight:500; }
-.shp-chevrons { display:flex; flex-direction:column; align-items:center; gap:3px; }
-.shp-chevrons span { display:block; width:11px; height:5px; border-right:1.5px solid rgba(253,248,232,0.34); border-bottom:1.5px solid rgba(253,248,232,0.34); transform:rotate(45deg); animation:chev 1.9s ease-in-out infinite; }
-.shp-chevrons span:nth-child(2){animation-delay:.18s;opacity:.5} .shp-chevrons span:nth-child(3){animation-delay:.36s;opacity:.26}
-@keyframes chev { 0%,100%{transform:rotate(45deg) translateY(-2px)} 50%{transform:rotate(45deg) translateY(2px)} }
-
-/* ---- DOOR STAGE ---- */
-.door-stage { perspective:2600px; perspective-origin:50% 28%; display:flex; position:relative; z-index:10; }
-.door-leaf { position:relative; transform-style:preserve-3d; will-change:transform; flex-shrink:0; }
-.door-leaf.dl { transform-origin:left center; transform:rotateY(0deg); }
-.door-leaf.dr { transform-origin:right center; transform:rotateY(0deg); }
-
-/* ================================================================
-   NAV — exact original .master-nav / .master-nav-inner
-   ================================================================ */
-.master-nav {
-  position:fixed; top:0; left:0; right:0; z-index:200;
-  background:rgba(253,248,232,0.95);
-  backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
-  border-bottom:1px solid rgba(163,28,33,0.1);
-  transition:transform .4s cubic-bezier(.25,.8,.25,1), box-shadow .3s ease;
-}
-.master-nav.nav-hidden { transform:translateY(-100%); pointer-events:none; }
-.master-nav-inner {
-  max-width:1200px; margin:0 auto; padding:0 28px;
-  height:64px;
-  display:grid; grid-template-columns:1fr auto 1fr; align-items:center;
-}
-.master-nav-logo { display:flex; align-items:center; }
-.master-nav-logo img { width:108px; height:auto; display:block; }
-.master-nav-links { display:flex; align-items:center; gap:30px; }
-.master-nav-links a {
-  color:var(--brand-warm); font-size:.88rem; font-weight:500;
-  letter-spacing:.3px; white-space:nowrap;
-  transition:color .2s ease; position:relative; padding-bottom:3px;
-}
-.master-nav-links a::after {
-  content:''; position:absolute; bottom:-2px; left:0; right:0;
-  height:2px; background:var(--brand-maroon); border-radius:2px;
-  transform:scaleX(0); transform-origin:center; transition:transform .22s ease;
-}
-.master-nav-links a:hover { color:var(--brand-maroon); }
-.master-nav-links a:hover::after { transform:scaleX(1); }
-.master-nav-end { display:flex; align-items:center; justify-content:flex-end; gap:12px; }
-.master-nav-contact {
-  color:var(--brand-maroon); font-size:.85rem; font-weight:600;
-  border:1.5px solid rgba(163,28,33,0.38); padding:7px 20px; border-radius:30px;
-  white-space:nowrap; transition:background .2s ease, color .2s ease, border-color .2s ease;
-}
-.master-nav-contact:hover { background:var(--brand-maroon); color:#fff; border-color:var(--brand-maroon); }
-@media(max-width:700px){
-  .master-nav-inner{grid-template-columns:1fr auto}
-  .master-nav-links{display:none}
-}
-
-/* ================================================================
-   MAIN CONTENT AREA — exact original .master-hero / tiles
-   ================================================================ */
-.master-hero {
-  position:relative; min-height:100vh;
-  padding:100px 24px 30px;
-  display:flex; flex-direction:column; align-items:center;
-}
-/* Very faint floral bg from original body.master-landing::before */
-.master-hero::before {
-  content:''; position:absolute; inset:0; z-index:0; pointer-events:none;
-  background-image:url('design%20assets/Flower%202.svg');
-  background-size:320px; background-repeat:repeat;
-  opacity:0.05; mix-blend-mode:multiply;
-}
-/* Hawa Mahal bg — exact original .master-hero-bg */
-.master-hero-bg {
-  position:absolute; inset:0;
-  background-size:cover; background-position:center top; background-repeat:no-repeat;
-  background-image:url('assets/patterns/hawa-mahal-web.jpg');
-  opacity:0.28; filter:saturate(0.75) contrast(0.9);
-  z-index:0;
-}
-/* Exact original .master-hero-overlay */
-.master-hero-overlay {
-  position:absolute; inset:0; z-index:0;
-  background:
-    radial-gradient(ellipse at top, rgba(163,28,33,0.06) 0%, rgba(253,248,232,0) 60%),
-    linear-gradient(180deg, rgba(253,248,232,0) 0%, rgba(253,248,232,0.6) 100%);
-}
-/* Spinning mandala — dynamic motion, very faint on cream */
-.hero-mandala {
-  position:absolute; top:50%; left:50%;
-  transform:translate(-50%,-50%);
-  width:min(90vw,860px); height:min(90vw,860px);
-  animation:spin-ccw 120s linear infinite;
-  opacity:0.06; z-index:1; pointer-events:none;
-}
-@keyframes spin-ccw { to{transform:translate(-50%,-50%) rotate(-360deg)} }
-.hero-mandala-inner {
-  position:absolute; top:50%; left:50%;
-  transform:translate(-50%,-50%);
-  width:min(50vw,480px); height:min(50vw,480px);
-  animation:spin-cw 80s linear infinite;
-  opacity:0.055; z-index:1; pointer-events:none;
-}
-@keyframes spin-cw { to{transform:translate(-50%,-50%) rotate(360deg)} }
-
-/* Exact original .master-hero-content */
-.master-hero-content {
-  position:relative; z-index:2;
-  text-align:center; max-width:900px; margin:20px auto 40px;
-}
-/* original .master-logo */
-.master-logo {
-  width:180px; height:auto; margin:0 auto 24px;
-  filter:drop-shadow(0 4px 12px rgba(163,28,33,0.15));
-}
-/* original .master-kicker */
-.master-kicker {
-  color:var(--brand-maroon); font-size:.9rem;
-  letter-spacing:4px; text-transform:uppercase;
-  margin-bottom:18px; font-weight:600; opacity:.85;
-}
-/* original .master-title */
-.master-title {
-  font-family:'Playfair Display',serif;
-  font-size:clamp(2.4rem,5vw,4.4rem);
-  color:var(--brand-ink); line-height:1.1;
-  margin-bottom:20px; letter-spacing:1px; font-weight:700;
-}
-.master-title span { color:var(--brand-maroon); font-style:italic; font-weight:600; }
-/* original .master-subtitle */
-.master-subtitle {
-  color:var(--brand-warm); font-size:1.15rem;
-  max-width:640px; margin:0 auto; font-weight:400; line-height:1.7;
-}
-
-/* exact original .master-tiles-wrapper + .master-tiles */
-.master-tiles-wrapper {
-  position:relative; z-index:2; width:100%; max-width:1200px; margin:0 auto;
-}
-.master-tiles {
-  display:grid; grid-template-columns:repeat(2,1fr); gap:20px;
-}
-
-/* exact original .master-tile */
-.master-tile {
-  position:relative; display:flex; flex-direction:column;
-  background:rgba(255,255,255,0.4);
-  border:1.5px solid rgba(122,20,24,0.4);
-  border-radius:20px; overflow:hidden;
-  transition:all .4s cubic-bezier(.25,.8,.25,1);
-  color:var(--brand-ink);
-  box-shadow:0 4px 12px rgba(122,20,24,0.12),0 20px 48px rgba(42,14,14,0.18);
-  text-decoration:none;
-  opacity:0; transform:translateY(50px);
-}
-.master-tile.revealed { animation:tile-in .8s cubic-bezier(.16,1,.3,1) forwards; }
-@keyframes tile-in { from{opacity:0;transform:translateY(50px)} to{opacity:1;transform:translateY(0)} }
-.master-tile:hover {
-  transform:translateY(-6px);
-  border-color:rgba(163,28,33,0.6);
-  box-shadow:0 8px 18px rgba(122,20,24,0.18),0 32px 70px rgba(42,14,14,0.28);
-}
-
-/* Per-brand tile backgrounds — exact original */
-.tile-thali  { background:#A31C20; border-color:#7a1418; }
-.tile-village { background:#FBC817; border-color:#c9a010; }
-.tile-yatra   { background:rgba(255,255,255,0.4); border-color:rgba(122,20,24,0.4); }
-.tile-vedanta { background:#3A7A35; border-color:#2a5a26; }
-
-/* exact .tile-media */
-.tile-media { position:relative; height:160px; overflow:hidden; }
-.tile-media img { width:100%; height:100%; object-fit:cover; transition:transform .6s ease; display:block; }
-.tile-village .tile-media img { object-position:center 20%; }
-.tile-vedanta .tile-media img { object-position:center 15%; }
-.master-tile:hover .tile-media img { transform:scale(1.07); }
-.tile-media::after {
-  content:''; position:absolute; inset:0;
-  background:linear-gradient(180deg,transparent 55%,rgba(253,248,243,0.35) 100%);
-}
-
-/* exact .tile-body */
-.tile-body { padding:20px 24px 24px; flex:1; display:flex; flex-direction:column; }
-.tile-eyebrow {
-  font-size:.75rem; letter-spacing:3px; text-transform:uppercase;
-  color:var(--brand-maroon); font-weight:700; margin-bottom:10px; opacity:.75;
-}
-.master-tile h2 { font-size:1.4rem; color:var(--brand-ink); margin-bottom:8px; letter-spacing:.3px; font-weight:700; }
-.tile-body p { color:var(--brand-warm); font-size:.95rem; margin-bottom:16px; flex:1; line-height:1.6; }
-/* exact .tile-cta */
-.tile-cta {
-  display:inline-flex; align-items:center; gap:8px;
-  font-weight:700; font-size:.78rem; letter-spacing:1.5px; text-transform:uppercase;
-  padding:10px 20px; border-radius:50px; align-self:flex-start;
-  transition:all .3s ease; color:#fff; background:var(--brand-maroon);
-}
-.master-tile:hover .tile-cta { transform:translateY(-2px); box-shadow:0 6px 18px rgba(0,0,0,.18); }
-.tile-cta i { transition:transform .3s ease; }
-.master-tile:hover .tile-cta i { transform:translateX(5px); }
-
-/* Per-brand text/button overrides — exact original */
-.tile-thali .tile-eyebrow, .tile-thali h2, .tile-thali .tile-body p { color:#fff; }
-.tile-thali .tile-eyebrow { opacity:.8; }
-.tile-thali .tile-cta { background:#fff; color:#A31C20; }
-.tile-thali:hover .tile-cta { background:#f5e0e0; }
-
-.tile-village .tile-eyebrow, .tile-village h2, .tile-village .tile-body p { color:var(--brand-ink); }
-.tile-village .tile-cta { background:#A31C21; color:#FBC817; }
-.tile-village:hover .tile-cta { background:#7a1418; }
-
-.tile-vedanta .tile-eyebrow, .tile-vedanta h2, .tile-vedanta .tile-body p { color:#fff; }
-.tile-vedanta .tile-eyebrow { opacity:.8; }
-.tile-vedanta .tile-cta { background:#fff; color:#3A7A35; }
-.tile-vedanta:hover .tile-cta { background:#e0f0e0; }
-
-/* exact .master-footer */
-.master-footer {
-  position:relative; z-index:2; width:100%;
-  text-align:center; margin-top:40px; padding:16px;
-  color:var(--brand-warm); font-size:.88rem; opacity:.75;
-}
-.master-footer a { color:var(--brand-maroon); font-weight:600; white-space:nowrap; }
-
-/* PAGE TRANSITION COMPAT */
-body.page-transition-enabled .master-hero,body.page-transition-enabled .master-footer{animation:gh-slide-in .5s cubic-bezier(.25,1,.25,1) both}
-body.page-is-leaving .master-hero,body.page-is-leaving .master-footer{animation:gh-slide-out .4s cubic-bezier(.25,1,.25,1) forwards!important;pointer-events:none}
-@keyframes gh-slide-in{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
-@keyframes gh-slide-out{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(-30px)}}
-
-/* RESPONSIVE — exact original */
-@media(max-width:760px){
-  .master-tiles{grid-template-columns:1fr;gap:14px;}
-  .master-hero{padding:80px 16px 30px;}
-  .master-hero-content{margin:15px auto 30px;}
-  .master-logo{width:120px;margin-bottom:15px;}
-  .tile-media{height:110px;}
-  .tile-body{padding:16px 20px 20px;}
-  .master-tile h2{font-size:1.25rem;margin-bottom:8px;}
-  .tile-body p{font-size:.9rem;margin-bottom:14px;}
-  .tile-eyebrow{margin-bottom:6px;}
-  .tile-cta{padding:8px 16px;font-size:.72rem;}
-  .master-footer{margin-top:20px;padding:12px 10px;font-size:.8rem;}
-  .torch-l{left:1%}.torch-r{right:1%}
-}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
-</style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
+    
+    <!-- Preload Hero Image -->
+    <link rel="preload" as="image" href="assets/patterns/hawa-mahal-web.jpg" fetchpriority="high">
+    <link rel="icon" type="image/svg+xml" href="assets/logos/ghoomar-mascot.svg">
 </head>
-<body class="master-landing">
+<body class="master-landing bg-camel-3">
 
-<!-- ================================================================
-     DOOR PORTAL — sticky inside 280vh scene wrap
-     ================================================================ -->
-<div id="scene-wrap">
-  <div id="doorPortal">
-    <div class="portal-jali"></div>
+    <nav class="master-nav">
+        <div class="master-nav-inner">
 
-    <!-- ============================================================
-         ZOOM WORLD — exact original site revealed as doors open
-         ============================================================ -->
-    <div id="zoom-world">
-      <div class="zw-base"></div>
-      <div class="zw-bg"></div>
-      <div class="zw-overlay"></div>
+            <a href="index.html" class="master-nav-logo">
+                <img src="assets/logos/ghoomar-thali.svg" alt="Ghoomar">
+            </a>
 
-      <!-- Dynamic motion canvas (geometric/mandala, replaces all props) -->
-      <canvas id="motionCanvas"></canvas>
+            <div class="master-nav-links">
+                <a href="https://thali.ghoomarthali.in/">Traditional Thali</a>
+                <a href="https://village.ghoomarthali.in/">Village</a>
+                <a href="https://yatra.ghoomarthali.in/">Yatra</a>
+                <a href="https://vedanta.ghoomarthali.in/">Vedanta</a>
+            </div>
 
-      <!-- Slowly spinning mandala SVG (very faint on cream) -->
-      <svg style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:min(90vw,860px);height:min(90vw,860px);animation:spin-ccw 120s linear infinite;opacity:0.055;pointer-events:none;z-index:1" viewBox="-150 -150 300 300" xmlns="http://www.w3.org/2000/svg">
-        <circle r="148" fill="none" stroke="#A31C21" stroke-width=".7" opacity=".5"/>
-        <circle r="140" fill="none" stroke="#A31C21" stroke-width=".3" opacity=".3"/>
-        <ellipse rx="4" ry="28" cy="-112" fill="#A31C21" opacity=".18" transform="rotate(0)"/><ellipse rx="4" ry="28" cy="-112" fill="#A31C21" opacity=".18" transform="rotate(22.5)"/><ellipse rx="4" ry="28" cy="-112" fill="#A31C21" opacity=".18" transform="rotate(45)"/><ellipse rx="4" ry="28" cy="-112" fill="#A31C21" opacity=".18" transform="rotate(67.5)"/><ellipse rx="4" ry="28" cy="-112" fill="#A31C21" opacity=".18" transform="rotate(90)"/><ellipse rx="4" ry="28" cy="-112" fill="#A31C21" opacity=".18" transform="rotate(112.5)"/><ellipse rx="4" ry="28" cy="-112" fill="#A31C21" opacity=".18" transform="rotate(135)"/><ellipse rx="4" ry="28" cy="-112" fill="#A31C21" opacity=".18" transform="rotate(157.5)"/><ellipse rx="4" ry="28" cy="-112" fill="#A31C21" opacity=".18" transform="rotate(180)"/><ellipse rx="4" ry="28" cy="-112" fill="#A31C21" opacity=".18" transform="rotate(202.5)"/><ellipse rx="4" ry="28" cy="-112" fill="#A31C21" opacity=".18" transform="rotate(225)"/><ellipse rx="4" ry="28" cy="-112" fill="#A31C21" opacity=".18" transform="rotate(247.5)"/><ellipse rx="4" ry="28" cy="-112" fill="#A31C21" opacity=".18" transform="rotate(270)"/><ellipse rx="4" ry="28" cy="-112" fill="#A31C21" opacity=".18" transform="rotate(292.5)"/><ellipse rx="4" ry="28" cy="-112" fill="#A31C21" opacity=".18" transform="rotate(315)"/><ellipse rx="4" ry="28" cy="-112" fill="#A31C21" opacity=".18" transform="rotate(337.5)"/>
-        <circle r="98" fill="none" stroke="#A31C21" stroke-width=".6" opacity=".42"/>
-        <ellipse rx="14" ry="46" cy="-52" fill="#A31C21" opacity=".05" transform="rotate(0)"/><ellipse rx="14" ry="46" cy="-52" fill="#A31C21" opacity=".05" transform="rotate(45)"/><ellipse rx="14" ry="46" cy="-52" fill="#A31C21" opacity=".05" transform="rotate(90)"/><ellipse rx="14" ry="46" cy="-52" fill="#A31C21" opacity=".05" transform="rotate(135)"/><ellipse rx="14" ry="46" cy="-52" fill="#A31C21" opacity=".05" transform="rotate(180)"/><ellipse rx="14" ry="46" cy="-52" fill="#A31C21" opacity=".05" transform="rotate(225)"/><ellipse rx="14" ry="46" cy="-52" fill="#A31C21" opacity=".05" transform="rotate(270)"/><ellipse rx="14" ry="46" cy="-52" fill="#A31C21" opacity=".05" transform="rotate(315)"/>
-        <circle r="66" fill="none" stroke="#A31C21" stroke-width=".6" opacity=".4"/>
-        <polygon points="0,-56 12,-12 56,0 12,12 0,56 -12,12 -56,0 -12,-12" fill="#A31C21" opacity=".03" stroke="#A31C21" stroke-width=".6"/>
-        <circle r="38" fill="none" stroke="#A31C21" stroke-width=".8" opacity=".38"/>
-        <circle r="18" fill="none" stroke="#A31C21" stroke-width=".8" opacity=".42"/>
-        <circle r="5" fill="#A31C21" opacity=".14"/><circle r="2" fill="#A31C21" opacity=".38"/>
-      </svg>
-      <!-- Faster inner mandala (counter) -->
-      <svg style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:min(48vw,440px);height:min(48vw,440px);animation:spin-cw 75s linear infinite;opacity:0.045;pointer-events:none;z-index:1" viewBox="-75 -75 150 150" xmlns="http://www.w3.org/2000/svg">
-        <circle r="74" fill="none" stroke="#A31C21" stroke-width=".6" opacity=".5"/>
-        <ellipse rx="3.5" ry="14" cy="-58" fill="#A31C21" opacity=".25" transform="rotate(0)"/><ellipse rx="3.5" ry="14" cy="-58" fill="#A31C21" opacity=".25" transform="rotate(30)"/><ellipse rx="3.5" ry="14" cy="-58" fill="#A31C21" opacity=".25" transform="rotate(60)"/><ellipse rx="3.5" ry="14" cy="-58" fill="#A31C21" opacity=".25" transform="rotate(90)"/><ellipse rx="3.5" ry="14" cy="-58" fill="#A31C21" opacity=".25" transform="rotate(120)"/><ellipse rx="3.5" ry="14" cy="-58" fill="#A31C21" opacity=".25" transform="rotate(150)"/><ellipse rx="3.5" ry="14" cy="-58" fill="#A31C21" opacity=".25" transform="rotate(180)"/><ellipse rx="3.5" ry="14" cy="-58" fill="#A31C21" opacity=".25" transform="rotate(210)"/><ellipse rx="3.5" ry="14" cy="-58" fill="#A31C21" opacity=".25" transform="rotate(240)"/><ellipse rx="3.5" ry="14" cy="-58" fill="#A31C21" opacity=".25" transform="rotate(270)"/><ellipse rx="3.5" ry="14" cy="-58" fill="#A31C21" opacity=".25" transform="rotate(300)"/><ellipse rx="3.5" ry="14" cy="-58" fill="#A31C21" opacity=".25" transform="rotate(330)"/>
-        <polygon points="0,-40 9,-9 40,0 9,9 0,40 -9,9 -40,0 -9,-9" fill="#A31C21" opacity=".04" stroke="#A31C21" stroke-width=".5"/>
-        <circle r="20" fill="none" stroke="#A31C21" stroke-width=".7" opacity=".4"/>
-        <circle r="3" fill="#A31C21" opacity=".32"/>
-      </svg>
+            <div class="master-nav-end">
+                <a href="tel:+918803980000" class="master-nav-contact">Contact</a>
+            </div>
 
-      <!-- Hero content — exact original markup/style -->
-      <div class="zw-content">
-        <img class="zw-logo" src="assets/logos/ghoomar-thali.svg" alt="Ghoomar">
-        <p class="zw-kicker">Celebrating Rajasthani Heritage Since 2016</p>
-        <h1 class="zw-title">One Name. <span class="accent">Four Worlds.</span></h1>
-        <p class="zw-subtitle">From the royal thali to the festive village, choose the Ghoomar experience you want to explore today.</p>
-      </div>
-    </div><!-- /#zoom-world -->
+        </div>
+    </nav>
 
-    <!-- TORCHES (part of the door atmosphere) -->
-    <div class="torch torch-l" aria-hidden="true">
-      <div class="tf"></div><div class="tg"></div>
-      <svg width="28" height="200" viewBox="0 0 28 200" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="bG" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stop-color="#562A04"/><stop offset="40%" stop-color="#B07A14"/>
-            <stop offset="70%" stop-color="#8C6010"/><stop offset="100%" stop-color="#462003"/>
-          </linearGradient>
-          <linearGradient id="sG" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stop-color="#3A1C04"/><stop offset="50%" stop-color="#9C7210"/><stop offset="100%" stop-color="#3A1C04"/>
-          </linearGradient>
-        </defs>
-        <path d="M3 15Q14 22 25 15L23 29Q14 37 5 29Z" fill="url(#bG)"/>
-        <rect x="11" y="29" width="6" height="126" fill="url(#sG)" rx="1"/>
-        <ellipse cx="14" cy="92" rx="7" ry="3.4" fill="url(#bG)"/>
-        <path d="M1 155L3 174Q14 185 25 174L27 155Q14 164 1 155Z" fill="url(#bG)"/>
-        <ellipse cx="14" cy="185" rx="10" ry="3.8" fill="#241002"/>
-      </svg>
-    </div>
-    <div class="torch torch-r" aria-hidden="true">
-      <div class="tf" style="animation-delay:.09s"></div>
-      <div class="tg" style="animation-delay:.09s"></div>
-      <svg width="28" height="200" viewBox="0 0 28 200" xmlns="http://www.w3.org/2000/svg">
-        <path d="M3 15Q14 22 25 15L23 29Q14 37 5 29Z" fill="url(#bG)"/>
-        <rect x="11" y="29" width="6" height="126" fill="url(#sG)" rx="1"/>
-        <ellipse cx="14" cy="92" rx="7" ry="3.4" fill="url(#bG)"/>
-        <path d="M1 155L3 174Q14 185 25 174L27 155Q14 164 1 155Z" fill="url(#bG)"/>
-        <ellipse cx="14" cy="185" rx="10" ry="3.8" fill="#241002"/>
-      </svg>
-    </div>
+    <section class="master-hero">
+        <img src="design%20assets/Flower%202.svg" class="deco-ornament deco-top-right" style="opacity: 0.15;" alt="" aria-hidden="true">
+        <img src="design%20assets/Camel%203.svg" class="deco-ornament deco-bottom-left" style="opacity: 0.12;" alt="" aria-hidden="true">
+        <div class="master-hero-bg" style="background-image: url('assets/patterns/hawa-mahal-web.jpg');"></div>
+        <div class="master-hero-overlay"></div>
 
-    <!-- DOOR SVG GRADIENT DEFS -->
-    <svg width="0" height="0" style="position:absolute">
-      <defs>
-        <linearGradient id="wdG" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stop-color="#120402"/><stop offset="18%" stop-color="#281004"/>
-          <stop offset="50%" stop-color="#3C1808"/><stop offset="82%" stop-color="#281004"/>
-          <stop offset="100%" stop-color="#120402"/>
-        </linearGradient>
-        <linearGradient id="brG" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#D4B856"/><stop offset="45%" stop-color="#B8881A"/><stop offset="100%" stop-color="#784C10"/>
-        </linearGradient>
-        <linearGradient id="pnG" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stop-color="#2A1006"/><stop offset="100%" stop-color="#1C0A03"/>
-        </linearGradient>
-        <linearGradient id="shG" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stop-color="rgba(255,255,255,0.08)"/><stop offset="100%" stop-color="rgba(255,255,255,0)"/>
-        </linearGradient>
-      </defs>
-    </svg>
-
-    <!-- ARCH UI -->
-    <div class="arch-frame-ui" id="archUI">
-      <p class="portal-greeting">Padharo Mahre Des</p>
-      <img class="portal-logo" src="assets/logos/ghoomar-thali.svg" alt="Ghoomar">
-
-      <div class="door-stage">
-        <!-- LEFT DOOR -->
-        <div class="door-leaf dl" id="dL">
-          <svg width="210" height="500" viewBox="0 0 210 500" xmlns="http://www.w3.org/2000/svg">
-            <rect x="1" y="1" width="208" height="498" fill="url(#wdG)" stroke="#381404" stroke-width="1.5"/>
-            <rect x="7" y="7" width="196" height="486" fill="none" stroke="#946018" stroke-width="2.2"/>
-            <rect x="10" y="10" width="190" height="480" fill="none" stroke="#4C2C04" stroke-width=".7"/>
-            <circle cx="19" cy="19" r="4" fill="url(#brG)"/><circle cx="42" cy="19" r="4" fill="url(#brG)"/><circle cx="65" cy="19" r="4" fill="url(#brG)"/><circle cx="88" cy="19" r="4" fill="url(#brG)"/><circle cx="111" cy="19" r="4" fill="url(#brG)"/><circle cx="134" cy="19" r="4" fill="url(#brG)"/><circle cx="157" cy="19" r="4" fill="url(#brG)"/><circle cx="180" cy="19" r="4" fill="url(#brG)"/>
-            <circle cx="19" cy="481" r="4" fill="url(#brG)"/><circle cx="42" cy="481" r="4" fill="url(#brG)"/><circle cx="65" cy="481" r="4" fill="url(#brG)"/><circle cx="88" cy="481" r="4" fill="url(#brG)"/><circle cx="111" cy="481" r="4" fill="url(#brG)"/><circle cx="134" cy="481" r="4" fill="url(#brG)"/><circle cx="157" cy="481" r="4" fill="url(#brG)"/><circle cx="180" cy="481" r="4" fill="url(#brG)"/>
-            <circle cx="19" cy="54" r="4" fill="url(#brG)"/><circle cx="19" cy="91" r="4" fill="url(#brG)"/><circle cx="19" cy="128" r="4" fill="url(#brG)"/><circle cx="19" cy="165" r="4" fill="url(#brG)"/><circle cx="19" cy="202" r="4" fill="url(#brG)"/><circle cx="19" cy="239" r="4" fill="url(#brG)"/><circle cx="19" cy="276" r="4" fill="url(#brG)"/><circle cx="19" cy="313" r="4" fill="url(#brG)"/><circle cx="19" cy="350" r="4" fill="url(#brG)"/><circle cx="19" cy="387" r="4" fill="url(#brG)"/><circle cx="19" cy="444" r="4" fill="url(#brG)"/>
-            <circle cx="191" cy="54" r="4" fill="url(#brG)"/><circle cx="191" cy="91" r="4" fill="url(#brG)"/><circle cx="191" cy="128" r="4" fill="url(#brG)"/><circle cx="191" cy="165" r="4" fill="url(#brG)"/><circle cx="191" cy="202" r="4" fill="url(#brG)"/><circle cx="191" cy="239" r="4" fill="url(#brG)"/><circle cx="191" cy="276" r="4" fill="url(#brG)"/><circle cx="191" cy="313" r="4" fill="url(#brG)"/><circle cx="191" cy="350" r="4" fill="url(#brG)"/><circle cx="191" cy="387" r="4" fill="url(#brG)"/><circle cx="191" cy="444" r="4" fill="url(#brG)"/>
-            <rect x="32" y="34" width="146" height="116" fill="url(#pnG)" stroke="#764810" stroke-width="1.3"/>
-            <rect x="36" y="38" width="138" height="108" fill="none" stroke="rgba(163,28,33,.26)" stroke-width=".7"/>
-            <polygon points="105,48 115,73 140,73 121,89 128,114 105,99 82,114 89,89 70,73 95,73" fill="none" stroke="#A31C21" stroke-width="1.1" opacity=".6"/>
-            <circle cx="105" cy="81" r="17" fill="none" stroke="#A31C21" stroke-width=".7" opacity=".4"/>
-            <circle cx="105" cy="81" r="7" fill="none" stroke="#B8881A" stroke-width=".9" opacity=".5"/>
-            <circle cx="105" cy="81" r="2.5" fill="#A31C21" opacity=".4"/>
-            <rect x="13" y="156" width="184" height="9" fill="#140402"/>
-            <polygon points="28,156 36,160.5 28,165 20,160.5" fill="none" stroke="#A31C21" stroke-width=".6" opacity=".4"/><polygon points="56,156 64,160.5 56,165 48,160.5" fill="none" stroke="#A31C21" stroke-width=".6" opacity=".4"/><polygon points="84,156 92,160.5 84,165 76,160.5" fill="none" stroke="#A31C21" stroke-width=".6" opacity=".4"/><polygon points="112,156 120,160.5 112,165 104,160.5" fill="none" stroke="#A31C21" stroke-width=".6" opacity=".4"/><polygon points="140,156 148,160.5 140,165 132,160.5" fill="none" stroke="#A31C21" stroke-width=".6" opacity=".4"/><polygon points="168,156 176,160.5 168,165 160,160.5" fill="none" stroke="#A31C21" stroke-width=".6" opacity=".4"/>
-            <rect x="32" y="171" width="146" height="172" fill="url(#pnG)" stroke="#764810" stroke-width="1.3"/>
-            <rect x="36" y="175" width="138" height="164" fill="none" stroke="rgba(163,28,33,.24)" stroke-width=".7"/>
-            <path d="M50 340L50 270Q50 193 105 188Q160 193 160 270L160 340Z" fill="none" stroke="#945A0E" stroke-width="1.1" opacity=".46"/>
-            <ellipse cx="105" cy="257" rx="30" ry="36" fill="none" stroke="#A31C21" stroke-width=".7" opacity=".22"/>
-            <ellipse cx="105" cy="257" rx="20" ry="25" fill="none" stroke="#A31C21" stroke-width=".7" opacity=".28"/>
-            <ellipse cx="105" cy="233" rx="7" ry="17" fill="none" stroke="#B8881A" stroke-width=".9" opacity=".4" transform="rotate(0,105,257)"/><ellipse cx="105" cy="233" rx="7" ry="17" fill="none" stroke="#B8881A" stroke-width=".9" opacity=".4" transform="rotate(45,105,257)"/><ellipse cx="105" cy="233" rx="7" ry="17" fill="none" stroke="#B8881A" stroke-width=".9" opacity=".4" transform="rotate(90,105,257)"/><ellipse cx="105" cy="233" rx="7" ry="17" fill="none" stroke="#B8881A" stroke-width=".9" opacity=".4" transform="rotate(135,105,257)"/><ellipse cx="105" cy="233" rx="7" ry="17" fill="none" stroke="#B8881A" stroke-width=".9" opacity=".4" transform="rotate(180,105,257)"/><ellipse cx="105" cy="233" rx="7" ry="17" fill="none" stroke="#B8881A" stroke-width=".9" opacity=".4" transform="rotate(225,105,257)"/><ellipse cx="105" cy="233" rx="7" ry="17" fill="none" stroke="#B8881A" stroke-width=".9" opacity=".4" transform="rotate(270,105,257)"/><ellipse cx="105" cy="233" rx="7" ry="17" fill="none" stroke="#B8881A" stroke-width=".9" opacity=".4" transform="rotate(315,105,257)"/>
-            <circle cx="105" cy="257" r="9" fill="none" stroke="#A31C21" stroke-width="1" opacity=".4"/>
-            <circle cx="105" cy="257" r="3.5" fill="#A31C21" opacity=".26"/>
-            <rect x="13" y="349" width="184" height="9" fill="#140402"/>
-            <polygon points="28,349 36,353.5 28,358 20,353.5" fill="none" stroke="#A31C21" stroke-width=".6" opacity=".4"/><polygon points="56,349 64,353.5 56,358 48,353.5" fill="none" stroke="#A31C21" stroke-width=".6" opacity=".4"/><polygon points="84,349 92,353.5 84,358 76,353.5" fill="none" stroke="#A31C21" stroke-width=".6" opacity=".4"/><polygon points="112,349 120,353.5 112,358 104,353.5" fill="none" stroke="#A31C21" stroke-width=".6" opacity=".4"/><polygon points="140,349 148,353.5 140,358 132,353.5" fill="none" stroke="#A31C21" stroke-width=".6" opacity=".4"/><polygon points="168,349 176,353.5 168,358 160,353.5" fill="none" stroke="#A31C21" stroke-width=".6" opacity=".4"/>
-            <rect x="32" y="364" width="146" height="106" fill="url(#pnG)" stroke="#764810" stroke-width="1.3"/>
-            <rect x="36" y="368" width="138" height="98" fill="none" stroke="rgba(163,28,33,.24)" stroke-width=".7"/>
-            <polygon points="52,382 65,392 52,402 39,392" fill="none" stroke="#945A0E" stroke-width=".9" opacity=".36"/><polygon points="158,382 171,392 158,402 145,392" fill="none" stroke="#945A0E" stroke-width=".9" opacity=".36"/>
-            <polygon points="52,432 65,442 52,452 39,442" fill="none" stroke="#945A0E" stroke-width=".9" opacity=".36"/><polygon points="158,432 171,442 158,452 145,442" fill="none" stroke="#945A0E" stroke-width=".9" opacity=".36"/>
-            <circle cx="105" cy="417" r="14" fill="none" stroke="#A31C21" stroke-width=".7" opacity=".28"/>
-            <circle cx="105" cy="417" r="7" fill="none" stroke="#B8881A" stroke-width=".9" opacity=".36"/>
-            <circle cx="105" cy="417" r="2.5" fill="#A31C21" opacity=".24"/>
-            <circle cx="180" cy="296" r="13" fill="none" stroke="url(#brG)" stroke-width="3"/>
-            <circle cx="180" cy="296" r="8" fill="none" stroke="rgba(163,28,33,.24)" stroke-width=".9"/>
-            <circle cx="180" cy="307" r="4.5" fill="url(#brG)"/>
-            <rect x="177.5" y="307" width="5" height="9" rx="2" fill="url(#brG)"/>
-            <rect x="205" y="0" width="5" height="500" fill="rgba(0,0,0,.7)"/>
-            <rect x="1" y="1" width="7" height="498" fill="url(#shG)" opacity=".1"/>
-          </svg>
+        <div class="master-hero-content">
+            <img src="assets/logos/ghoomar-thali.svg" alt="Ghoomar" class="master-logo">
+            <p class="master-kicker">Celebrating Rajasthani Heritage Since 2016</p>
+            <h1 class="master-title">One Name. <span class="accent-font">Four Worlds.</span></h1>
+            <p class="master-subtitle">From the royal thali to the festive village, choose the Ghoomar experience you want to explore today.</p>
         </div>
 
-        <div class="gap-light" id="gapLt"></div>
+        <div class="master-tiles-wrapper">
+            <div class="master-tiles">
 
-        <!-- RIGHT DOOR -->
-        <div class="door-leaf dr" id="dR">
-          <svg width="210" height="500" viewBox="0 0 210 500" xmlns="http://www.w3.org/2000/svg" style="transform:scaleX(-1)">
-            <rect x="1" y="1" width="208" height="498" fill="url(#wdG)" stroke="#381404" stroke-width="1.5"/>
-            <rect x="7" y="7" width="196" height="486" fill="none" stroke="#946018" stroke-width="2.2"/>
-            <rect x="10" y="10" width="190" height="480" fill="none" stroke="#4C2C04" stroke-width=".7"/>
-            <circle cx="19" cy="19" r="4" fill="url(#brG)"/><circle cx="42" cy="19" r="4" fill="url(#brG)"/><circle cx="65" cy="19" r="4" fill="url(#brG)"/><circle cx="88" cy="19" r="4" fill="url(#brG)"/><circle cx="111" cy="19" r="4" fill="url(#brG)"/><circle cx="134" cy="19" r="4" fill="url(#brG)"/><circle cx="157" cy="19" r="4" fill="url(#brG)"/><circle cx="180" cy="19" r="4" fill="url(#brG)"/>
-            <circle cx="19" cy="481" r="4" fill="url(#brG)"/><circle cx="42" cy="481" r="4" fill="url(#brG)"/><circle cx="65" cy="481" r="4" fill="url(#brG)"/><circle cx="88" cy="481" r="4" fill="url(#brG)"/><circle cx="111" cy="481" r="4" fill="url(#brG)"/><circle cx="134" cy="481" r="4" fill="url(#brG)"/><circle cx="157" cy="481" r="4" fill="url(#brG)"/><circle cx="180" cy="481" r="4" fill="url(#brG)"/>
-            <circle cx="19" cy="54" r="4" fill="url(#brG)"/><circle cx="19" cy="91" r="4" fill="url(#brG)"/><circle cx="19" cy="128" r="4" fill="url(#brG)"/><circle cx="19" cy="165" r="4" fill="url(#brG)"/><circle cx="19" cy="202" r="4" fill="url(#brG)"/><circle cx="19" cy="239" r="4" fill="url(#brG)"/><circle cx="19" cy="276" r="4" fill="url(#brG)"/><circle cx="19" cy="313" r="4" fill="url(#brG)"/><circle cx="19" cy="350" r="4" fill="url(#brG)"/><circle cx="19" cy="387" r="4" fill="url(#brG)"/><circle cx="19" cy="444" r="4" fill="url(#brG)"/>
-            <circle cx="191" cy="54" r="4" fill="url(#brG)"/><circle cx="191" cy="91" r="4" fill="url(#brG)"/><circle cx="191" cy="128" r="4" fill="url(#brG)"/><circle cx="191" cy="165" r="4" fill="url(#brG)"/><circle cx="191" cy="202" r="4" fill="url(#brG)"/><circle cx="191" cy="239" r="4" fill="url(#brG)"/><circle cx="191" cy="276" r="4" fill="url(#brG)"/><circle cx="191" cy="313" r="4" fill="url(#brG)"/><circle cx="191" cy="350" r="4" fill="url(#brG)"/><circle cx="191" cy="387" r="4" fill="url(#brG)"/><circle cx="191" cy="444" r="4" fill="url(#brG)"/>
-            <rect x="32" y="34" width="146" height="116" fill="url(#pnG)" stroke="#764810" stroke-width="1.3"/>
-            <rect x="36" y="38" width="138" height="108" fill="none" stroke="rgba(163,28,33,.26)" stroke-width=".7"/>
-            <polygon points="105,48 115,73 140,73 121,89 128,114 105,99 82,114 89,89 70,73 95,73" fill="none" stroke="#A31C21" stroke-width="1.1" opacity=".6"/>
-            <circle cx="105" cy="81" r="17" fill="none" stroke="#A31C21" stroke-width=".7" opacity=".4"/>
-            <circle cx="105" cy="81" r="7" fill="none" stroke="#B8881A" stroke-width=".9" opacity=".5"/>
-            <circle cx="105" cy="81" r="2.5" fill="#A31C21" opacity=".4"/>
-            <rect x="13" y="156" width="184" height="9" fill="#140402"/>
-            <polygon points="28,156 36,160.5 28,165 20,160.5" fill="none" stroke="#A31C21" stroke-width=".6" opacity=".4"/><polygon points="56,156 64,160.5 56,165 48,160.5" fill="none" stroke="#A31C21" stroke-width=".6" opacity=".4"/><polygon points="84,156 92,160.5 84,165 76,160.5" fill="none" stroke="#A31C21" stroke-width=".6" opacity=".4"/><polygon points="112,156 120,160.5 112,165 104,160.5" fill="none" stroke="#A31C21" stroke-width=".6" opacity=".4"/><polygon points="140,156 148,160.5 140,165 132,160.5" fill="none" stroke="#A31C21" stroke-width=".6" opacity=".4"/><polygon points="168,156 176,160.5 168,165 160,160.5" fill="none" stroke="#A31C21" stroke-width=".6" opacity=".4"/>
-            <rect x="32" y="171" width="146" height="172" fill="url(#pnG)" stroke="#764810" stroke-width="1.3"/>
-            <rect x="36" y="175" width="138" height="164" fill="none" stroke="rgba(163,28,33,.24)" stroke-width=".7"/>
-            <path d="M50 340L50 270Q50 193 105 188Q160 193 160 270L160 340Z" fill="none" stroke="#945A0E" stroke-width="1.1" opacity=".46"/>
-            <ellipse cx="105" cy="257" rx="30" ry="36" fill="none" stroke="#A31C21" stroke-width=".7" opacity=".22"/>
-            <ellipse cx="105" cy="257" rx="20" ry="25" fill="none" stroke="#A31C21" stroke-width=".7" opacity=".28"/>
-            <ellipse cx="105" cy="233" rx="7" ry="17" fill="none" stroke="#B8881A" stroke-width=".9" opacity=".4" transform="rotate(0,105,257)"/><ellipse cx="105" cy="233" rx="7" ry="17" fill="none" stroke="#B8881A" stroke-width=".9" opacity=".4" transform="rotate(45,105,257)"/><ellipse cx="105" cy="233" rx="7" ry="17" fill="none" stroke="#B8881A" stroke-width=".9" opacity=".4" transform="rotate(90,105,257)"/><ellipse cx="105" cy="233" rx="7" ry="17" fill="none" stroke="#B8881A" stroke-width=".9" opacity=".4" transform="rotate(135,105,257)"/><ellipse cx="105" cy="233" rx="7" ry="17" fill="none" stroke="#B8881A" stroke-width=".9" opacity=".4" transform="rotate(180,105,257)"/><ellipse cx="105" cy="233" rx="7" ry="17" fill="none" stroke="#B8881A" stroke-width=".9" opacity=".4" transform="rotate(225,105,257)"/><ellipse cx="105" cy="233" rx="7" ry="17" fill="none" stroke="#B8881A" stroke-width=".9" opacity=".4" transform="rotate(270,105,257)"/><ellipse cx="105" cy="233" rx="7" ry="17" fill="none" stroke="#B8881A" stroke-width=".9" opacity=".4" transform="rotate(315,105,257)"/>
-            <circle cx="105" cy="257" r="9" fill="none" stroke="#A31C21" stroke-width="1" opacity=".4"/>
-            <circle cx="105" cy="257" r="3.5" fill="#A31C21" opacity=".26"/>
-            <rect x="13" y="349" width="184" height="9" fill="#140402"/>
-            <polygon points="28,349 36,353.5 28,358 20,353.5" fill="none" stroke="#A31C21" stroke-width=".6" opacity=".4"/><polygon points="56,349 64,353.5 56,358 48,353.5" fill="none" stroke="#A31C21" stroke-width=".6" opacity=".4"/><polygon points="84,349 92,353.5 84,358 76,353.5" fill="none" stroke="#A31C21" stroke-width=".6" opacity=".4"/><polygon points="112,349 120,353.5 112,358 104,353.5" fill="none" stroke="#A31C21" stroke-width=".6" opacity=".4"/><polygon points="140,349 148,353.5 140,358 132,353.5" fill="none" stroke="#A31C21" stroke-width=".6" opacity=".4"/><polygon points="168,349 176,353.5 168,358 160,353.5" fill="none" stroke="#A31C21" stroke-width=".6" opacity=".4"/>
-            <rect x="32" y="364" width="146" height="106" fill="url(#pnG)" stroke="#764810" stroke-width="1.3"/>
-            <rect x="36" y="368" width="138" height="98" fill="none" stroke="rgba(163,28,33,.24)" stroke-width=".7"/>
-            <polygon points="52,382 65,392 52,402 39,392" fill="none" stroke="#945A0E" stroke-width=".9" opacity=".36"/><polygon points="158,382 171,392 158,402 145,392" fill="none" stroke="#945A0E" stroke-width=".9" opacity=".36"/>
-            <polygon points="52,432 65,442 52,452 39,442" fill="none" stroke="#945A0E" stroke-width=".9" opacity=".36"/><polygon points="158,432 171,442 158,452 145,442" fill="none" stroke="#945A0E" stroke-width=".9" opacity=".36"/>
-            <circle cx="105" cy="417" r="14" fill="none" stroke="#A31C21" stroke-width=".7" opacity=".28"/>
-            <circle cx="105" cy="417" r="7" fill="none" stroke="#B8881A" stroke-width=".9" opacity=".36"/>
-            <circle cx="105" cy="417" r="2.5" fill="#A31C21" opacity=".24"/>
-            <circle cx="180" cy="296" r="13" fill="none" stroke="url(#brG)" stroke-width="3"/>
-            <circle cx="180" cy="296" r="8" fill="none" stroke="rgba(163,28,33,.24)" stroke-width=".9"/>
-            <circle cx="180" cy="307" r="4.5" fill="url(#brG)"/>
-            <rect x="177.5" y="307" width="5" height="9" rx="2" fill="url(#brG)"/>
-            <rect x="205" y="0" width="5" height="500" fill="rgba(0,0,0,.7)"/>
-            <rect x="1" y="1" width="7" height="498" fill="url(#shG)" opacity=".1"/>
-          </svg>
+                <a href="https://thali.ghoomarthali.in/" class="master-tile tile-thali">
+                    <div class="tile-media">
+                        <img src="assets/thali/food/serving-thali-web.jpg" alt="Ghoomar Traditional Thali" loading="eager" fetchpriority="high" width="600" height="220" decoding="async">
+                    </div>
+                    <div class="tile-body">
+                        <span class="tile-eyebrow">Dine</span>
+                        <h2>Ghoomar Traditional Thali</h2>
+                        <p>Unlimited Pure Veg Rajasthani Thali served with 24+ Chokho dishes</p>
+                        <span class="tile-cta">Explore our Thali <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </a>
+
+                <a href="https://village.ghoomarthali.in/" class="master-tile tile-village">
+                    <div class="tile-media">
+                        <img src="assets/village/Ghoomar village.webp" alt="Ghoomar Village" loading="lazy" decoding="async">
+                    </div>
+                    <div class="tile-body">
+                        <span class="tile-eyebrow">Celebrate</span>
+                        <h2>Ghoomar Village</h2>
+                        <p>25,000 sq.ft. of Unlimited Fun, Unlimited Food, Experience Culture, and Heritage</p>
+                        <span class="tile-cta">Enter the Village <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </a>
+
+                <a href="https://vedanta.ghoomarthali.in/" class="master-tile tile-vedanta">
+                    <div class="tile-media">
+                        <img src="assets/vedanta/Vedanta Exterior.jpg" alt="Vedanta By Ghoomar Exterior" loading="lazy" decoding="async">
+                    </div>
+                    <div class="tile-body">
+                        <span class="tile-eyebrow">Wellness</span>
+                        <h2>Vedanta By Ghoomar</h2>
+                        <p>A Pure Vegetarian Multicuisine Dining Experience Inspired by Tradition and Taste</p>
+                        <span class="tile-cta">Explore Vedanta <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </a>
+
+                <a href="https://yatra.ghoomarthali.in/" class="master-tile tile-yatra coming">
+                    <div class="tile-media">
+                        <img src="assets/patterns/pattern-2-web.jpg" alt="Ghoomar Yatra" loading="lazy" width="600" height="300" decoding="async">
+                    </div>
+                    <div class="tile-body">
+                        <span class="tile-eyebrow">Journey</span>
+                        <h2>Ghoomar Yatra</h2>
+                        <p>Curated Rajasthani travel and pilgrimage experiences, coming soon.</p>
+                        <span class="tile-cta">Begin your Journey <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </a>
+
+            </div>
         </div>
-      </div><!-- /door-stage -->
-    </div><!-- /arch-frame-ui -->
 
-    <div class="scroll-hint-portal" id="scrollHintPortal">
-      <span class="shp-word">Scroll to Enter</span>
-      <div class="shp-chevrons"><span></span><span></span><span></span></div>
-    </div>
-  </div><!-- /#doorPortal -->
-</div><!-- /#scene-wrap -->
+        <footer class="master-footer">
+            <p>&copy; 2026 Ghoomar. All Rights Reserved. &nbsp;|&nbsp; <a href="tel:+918803980000">+91 88039 80000</a> &nbsp;|&nbsp; <a href="mailto:support@ghoomarthali.in">support@ghoomarthali.in</a></p>
+        </footer>
+    </section>
 
-<!-- ================================================================
-     NAV — exact original master-nav structure
-     ================================================================ -->
-<nav class="master-nav" id="mainNav">
-  <div class="master-nav-inner">
-    <div class="master-nav-logo">
-      <a href="index.html"><img src="assets/logos/ghoomar-thali.svg" alt="Ghoomar"></a>
-    </div>
-    <div class="master-nav-links">
-      <a href="https://thali.ghoomarthali.in/">Traditional Thali</a>
-      <a href="https://village.ghoomarthali.in/">Village</a>
-      <a href="https://yatra.ghoomarthali.in/">Yatra</a>
-      <a href="https://vedanta.ghoomarthali.in/">Vedanta</a>
-    </div>
-    <div class="master-nav-end">
-      <a href="tel:+918803980000" class="master-nav-contact">Contact</a>
-    </div>
-  </div>
-</nav>
-
-<!-- ================================================================
-     MAIN CONTENT — exact original master-hero structure + spinning mandala
-     ================================================================ -->
-<main class="master-hero" id="masterHero">
-  <div class="master-hero-bg"></div>
-  <div class="master-hero-overlay"></div>
-
-  <!-- Dynamic spinning mandalas -->
-  <svg class="hero-mandala" viewBox="-150 -150 300 300" xmlns="http://www.w3.org/2000/svg">
-    <circle r="148" fill="none" stroke="#A31C21" stroke-width=".7" opacity=".45"/>
-    <ellipse rx="4" ry="28" cy="-112" fill="#A31C21" opacity=".16" transform="rotate(0)"/><ellipse rx="4" ry="28" cy="-112" fill="#A31C21" opacity=".16" transform="rotate(22.5)"/><ellipse rx="4" ry="28" cy="-112" fill="#A31C21" opacity=".16" transform="rotate(45)"/><ellipse rx="4" ry="28" cy="-112" fill="#A31C21" opacity=".16" transform="rotate(67.5)"/><ellipse rx="4" ry="28" cy="-112" fill="#A31C21" opacity=".16" transform="rotate(90)"/><ellipse rx="4" ry="28" cy="-112" fill="#A31C21" opacity=".16" transform="rotate(112.5)"/><ellipse rx="4" ry="28" cy="-112" fill="#A31C21" opacity=".16" transform="rotate(135)"/><ellipse rx="4" ry="28" cy="-112" fill="#A31C21" opacity=".16" transform="rotate(157.5)"/><ellipse rx="4" ry="28" cy="-112" fill="#A31C21" opacity=".16" transform="rotate(180)"/><ellipse rx="4" ry="28" cy="-112" fill="#A31C21" opacity=".16" transform="rotate(202.5)"/><ellipse rx="4" ry="28" cy="-112" fill="#A31C21" opacity=".16" transform="rotate(225)"/><ellipse rx="4" ry="28" cy="-112" fill="#A31C21" opacity=".16" transform="rotate(247.5)"/><ellipse rx="4" ry="28" cy="-112" fill="#A31C21" opacity=".16" transform="rotate(270)"/><ellipse rx="4" ry="28" cy="-112" fill="#A31C21" opacity=".16" transform="rotate(292.5)"/><ellipse rx="4" ry="28" cy="-112" fill="#A31C21" opacity=".16" transform="rotate(315)"/><ellipse rx="4" ry="28" cy="-112" fill="#A31C21" opacity=".16" transform="rotate(337.5)"/>
-    <circle r="98" fill="none" stroke="#A31C21" stroke-width=".6" opacity=".38"/>
-    <ellipse rx="14" ry="46" cy="-52" fill="#A31C21" opacity=".04" transform="rotate(0)"/><ellipse rx="14" ry="46" cy="-52" fill="#A31C21" opacity=".04" transform="rotate(45)"/><ellipse rx="14" ry="46" cy="-52" fill="#A31C21" opacity=".04" transform="rotate(90)"/><ellipse rx="14" ry="46" cy="-52" fill="#A31C21" opacity=".04" transform="rotate(135)"/><ellipse rx="14" ry="46" cy="-52" fill="#A31C21" opacity=".04" transform="rotate(180)"/><ellipse rx="14" ry="46" cy="-52" fill="#A31C21" opacity=".04" transform="rotate(225)"/><ellipse rx="14" ry="46" cy="-52" fill="#A31C21" opacity=".04" transform="rotate(270)"/><ellipse rx="14" ry="46" cy="-52" fill="#A31C21" opacity=".04" transform="rotate(315)"/>
-    <circle r="66" fill="none" stroke="#A31C21" stroke-width=".6" opacity=".36"/>
-    <polygon points="0,-56 12,-12 56,0 12,12 0,56 -12,12 -56,0 -12,-12" fill="#A31C21" opacity=".025" stroke="#A31C21" stroke-width=".6"/>
-    <circle r="38" fill="none" stroke="#A31C21" stroke-width=".75" opacity=".35"/>
-    <circle r="18" fill="none" stroke="#A31C21" stroke-width=".75" opacity=".38"/>
-    <circle r="5" fill="#A31C21" opacity=".12"/><circle r="2" fill="#A31C21" opacity=".32"/>
-  </svg>
-  <svg class="hero-mandala-inner" viewBox="-75 -75 150 150" xmlns="http://www.w3.org/2000/svg">
-    <circle r="74" fill="none" stroke="#A31C21" stroke-width=".6" opacity=".42"/>
-    <ellipse rx="3.5" ry="14" cy="-58" fill="#A31C21" opacity=".2" transform="rotate(0)"/><ellipse rx="3.5" ry="14" cy="-58" fill="#A31C21" opacity=".2" transform="rotate(30)"/><ellipse rx="3.5" ry="14" cy="-58" fill="#A31C21" opacity=".2" transform="rotate(60)"/><ellipse rx="3.5" ry="14" cy="-58" fill="#A31C21" opacity=".2" transform="rotate(90)"/><ellipse rx="3.5" ry="14" cy="-58" fill="#A31C21" opacity=".2" transform="rotate(120)"/><ellipse rx="3.5" ry="14" cy="-58" fill="#A31C21" opacity=".2" transform="rotate(150)"/><ellipse rx="3.5" ry="14" cy="-58" fill="#A31C21" opacity=".2" transform="rotate(180)"/><ellipse rx="3.5" ry="14" cy="-58" fill="#A31C21" opacity=".2" transform="rotate(210)"/><ellipse rx="3.5" ry="14" cy="-58" fill="#A31C21" opacity=".2" transform="rotate(240)"/><ellipse rx="3.5" ry="14" cy="-58" fill="#A31C21" opacity=".2" transform="rotate(270)"/><ellipse rx="3.5" ry="14" cy="-58" fill="#A31C21" opacity=".2" transform="rotate(300)"/><ellipse rx="3.5" ry="14" cy="-58" fill="#A31C21" opacity=".2" transform="rotate(330)"/>
-    <polygon points="0,-40 9,-9 40,0 9,9 0,40 -9,9 -40,0 -9,-9" fill="#A31C21" opacity=".03" stroke="#A31C21" stroke-width=".5"/>
-    <circle r="20" fill="none" stroke="#A31C21" stroke-width=".65" opacity=".36"/>
-    <circle r="3" fill="#A31C21" opacity=".26"/>
-  </svg>
-
-  <!-- Exact original hero content -->
-  <div class="master-hero-content">
-    <img class="master-logo" src="assets/logos/ghoomar-thali.svg" alt="Ghoomar">
-    <p class="master-kicker">Celebrating Rajasthani Heritage Since 2016</p>
-    <h1 class="master-title">One Name. <span>Four Worlds.</span></h1>
-    <p class="master-subtitle">From the royal thali to the festive village, choose the Ghoomar experience you want to explore today.</p>
-  </div>
-
-  <!-- Exact original tiles -->
-  <div class="master-tiles-wrapper">
-    <div class="master-tiles">
-
-      <a href="https://thali.ghoomarthali.in/" class="master-tile tile-thali">
-        <div class="tile-media">
-          <img src="assets/thali/food/serving-thali-web.jpg" alt="Ghoomar Traditional Thali" loading="eager" fetchpriority="high">
-        </div>
-        <div class="tile-body">
-          <span class="tile-eyebrow">Dine</span>
-          <h2>Ghoomar Traditional Thali</h2>
-          <p>Unlimited Pure Veg Rajasthani Thali served with 24+ Chokho dishes</p>
-          <span class="tile-cta">Explore our Thali <i class="fas fa-arrow-right"></i></span>
-        </div>
-      </a>
-
-      <a href="https://village.ghoomarthali.in/" class="master-tile tile-village">
-        <div class="tile-media">
-          <img src="assets/village/Ghoomar village.webp" alt="Ghoomar Village" loading="lazy">
-        </div>
-        <div class="tile-body">
-          <span class="tile-eyebrow">Celebrate</span>
-          <h2>Ghoomar Village</h2>
-          <p>25,000 sq.ft. of Unlimited Fun, Unlimited Food, Experience Culture, and Heritage</p>
-          <span class="tile-cta">Enter the Village <i class="fas fa-arrow-right"></i></span>
-        </div>
-      </a>
-
-      <a href="https://vedanta.ghoomarthali.in/" class="master-tile tile-vedanta">
-        <div class="tile-media">
-          <img src="assets/vedanta/Vedanta Exterior.jpg" alt="Vedanta By Ghoomar" loading="lazy">
-        </div>
-        <div class="tile-body">
-          <span class="tile-eyebrow">Wellness</span>
-          <h2>Vedanta By Ghoomar</h2>
-          <p>A Pure Vegetarian Multicuisine Dining Experience Inspired by Tradition and Taste</p>
-          <span class="tile-cta">Explore Vedanta <i class="fas fa-arrow-right"></i></span>
-        </div>
-      </a>
-
-      <a href="https://yatra.ghoomarthali.in/" class="master-tile tile-yatra">
-        <div class="tile-media">
-          <img src="assets/patterns/pattern-2-web.jpg" alt="Ghoomar Yatra" loading="lazy">
-        </div>
-        <div class="tile-body">
-          <span class="tile-eyebrow">Journey</span>
-          <h2>Ghoomar Yatra</h2>
-          <p>Curated Rajasthani travel and pilgrimage experiences, coming soon.</p>
-          <span class="tile-cta">Begin your Journey <i class="fas fa-arrow-right"></i></span>
-        </div>
-      </a>
-
-    </div>
-  </div>
-
-  <!-- Exact original footer -->
-  <footer class="master-footer master-footer">
-    <p>&copy; 2026 Ghoomar. All Rights Reserved. &nbsp;|&nbsp;
-      <a href="tel:+918803980000">+91 88039 80000</a> &nbsp;|&nbsp;
-      <a href="mailto:support@ghoomarthali.in">support@ghoomarthali.in</a>
-    </p>
-  </footer>
-</main>
-
-<script>
-/* ================================================================
-   SCROLL-DRIVEN DOOR + ZOOM
-   ================================================================ */
-(function(){
-  var portal  = document.getElementById('doorPortal');
-  var dL      = document.getElementById('dL');
-  var dR      = document.getElementById('dR');
-  var gapLt   = document.getElementById('gapLt');
-  var zWorld  = document.getElementById('zoom-world');
-  var archUI  = document.getElementById('archUI');
-  var shpHint = document.getElementById('scrollHintPortal');
-  var wrap    = document.getElementById('scene-wrap');
-
-  function ease(t){return t<.5?2*t*t:-1+(4-2*t)*t}
-  function map(v,a,b,c,d){var t=Math.min(1,Math.max(0,(v-a)/(b-a)));return c+(d-c)*t}
-  function mapE(v,a,b,c,d){return map(ease(Math.min(1,Math.max(0,(v-a)/(b-a)))),0,1,c,d)}
-
-  function update(){
-    var sy  = window.pageYOffset;
-    var scH = wrap.offsetHeight - window.innerHeight;
-    var p   = Math.min(1,Math.max(0,sy/scH));
-
-    /* Doors swing open */
-    var angle = mapE(p,0,.82,0,115);
-    dL.style.transform='rotateY(-'+angle+'deg)';
-    dR.style.transform='rotateY('+angle+'deg)';
-
-    /* Gap light fades */
-    gapLt.style.opacity=Math.max(0,1-p*3.5);
-
-    /* Arch UI fades */
-    archUI.style.opacity=Math.max(0,mapE(p,.18,.45,1,0));
-    shpHint.style.opacity=Math.max(0,1-p*7);
-
-    /* Zoom world */
-    var wO=Math.min(1,mapE(p,0,.48,0,1));
-    var wS;
-    if(p<.55)      wS=mapE(p,0,.55,.58,1.0);
-    else if(p<.82) wS=mapE(p,.55,.82,1.0,1.72);
-    else           wS=mapE(p,.82,1.0,1.72,2.1);
-    zWorld.style.opacity=wO;
-    zWorld.style.transform='scale('+wS+') translateZ(0)';
-
-    /* Portal fade out */
-    var pO=p<.78?1:Math.max(0,1-map(p,.78,1,0,1));
-    portal.style.opacity=pO;
-    portal.style.visibility=p>=1?'hidden':'visible';
-  }
-
-  var tick=false;
-  window.addEventListener('scroll',function(){
-    if(!tick){requestAnimationFrame(function(){update();tick=false;});tick=true;}
-  },{passive:true});
-  update();
-})();
-
-/* ================================================================
-   MOTION CANVAS — dynamic geometric patterns on cream bg
-   Floating diamonds, rotating rings, drifting dots — maroon on cream
-   ================================================================ */
-(function(){
-  var c=document.getElementById('motionCanvas');
-  if(!c)return;
-  var ctx=c.getContext('2d');
-  var W,H,t=0;
-
-  function resize(){
-    var r=c.parentElement.getBoundingClientRect();
-    W=c.width=r.width||window.innerWidth;
-    H=c.height=r.height||window.innerHeight;
-  }
-  resize();
-  window.addEventListener('resize',resize,{passive:true});
-
-  /* Floating diamond particles */
-  var diamonds=[];
-  for(var i=0;i<18;i++){
-    diamonds.push({
-      x:Math.random()*1,y:Math.random()*1,
-      size:Math.random()*18+8,
-      speed:Math.random()*.0002+.0001,
-      phase:Math.random()*Math.PI*2,
-      opacity:Math.random()*.15+.04
-    });
-  }
-
-  function draw(){
-    ctx.clearRect(0,0,W,H);
-    t+=0.008;
-
-    /* Drifting diamonds */
-    diamonds.forEach(function(d){
-      d.y-=d.speed;
-      if(d.y<-0.05)d.y=1.05;
-      var x=d.x*W+Math.sin(t*0.4+d.phase)*30;
-      var y=d.y*H;
-      var s=d.size;
-      ctx.save();
-      ctx.globalAlpha=d.opacity;
-      ctx.strokeStyle='#A31C21';
-      ctx.lineWidth=0.8;
-      ctx.beginPath();
-      ctx.moveTo(x,y-s);ctx.lineTo(x+s,y);ctx.lineTo(x,y+s);ctx.lineTo(x-s,y);ctx.closePath();
-      ctx.stroke();
-      ctx.restore();
-    });
-
-    /* Slow expanding/contracting rings centered */
-    var cx=W/2,cy=H/2;
-    for(var r=0;r<5;r++){
-      var rad=80+r*90+Math.sin(t*0.3+r)*20;
-      ctx.save();
-      ctx.globalAlpha=0.04+r*0.008;
-      ctx.strokeStyle='#A31C21';
-      ctx.lineWidth=0.7;
-      ctx.beginPath();
-      ctx.arc(cx,cy,rad,0,Math.PI*2);
-      ctx.stroke();
-      ctx.restore();
-    }
-
-    /* Rotating 8-point star outline */
-    ctx.save();
-    ctx.translate(cx,cy);
-    ctx.rotate(t*0.08);
-    ctx.globalAlpha=0.032;
-    ctx.strokeStyle='#A31C21';
-    ctx.lineWidth=0.8;
-    ctx.beginPath();
-    for(var n=0;n<8;n++){
-      var a=n/8*Math.PI*2;
-      var ri=n%2===0?55:25;
-      if(n===0)ctx.moveTo(Math.cos(a)*ri,Math.sin(a)*ri);
-      else ctx.lineTo(Math.cos(a)*ri,Math.sin(a)*ri);
-    }
-    ctx.closePath();ctx.stroke();
-    ctx.restore();
-
-    requestAnimationFrame(draw);
-  }
-  draw();
-})();
-
-/* ================================================================
-   NAV HIDE ON SCROLL DOWN
-   ================================================================ */
-(function(){
-  var nav=document.getElementById('mainNav'),ly=0;
-  window.addEventListener('scroll',function(){
-    var y=pageYOffset;
-    if(y>ly+6&&y>200)nav.classList.add('nav-hidden');
-    else if(y<ly-6)nav.classList.remove('nav-hidden');
-    ly=y;
-  },{passive:true});
-})();
-
-/* ================================================================
-   TILE REVEAL
-   ================================================================ */
-(function(){
-  var tiles=document.querySelectorAll('.master-tile');
-  var obs=new IntersectionObserver(function(en){
-    en.forEach(function(e){if(e.isIntersecting){e.target.classList.add('revealed');obs.unobserve(e.target);}});
-  },{threshold:.06,rootMargin:'0px 0px -20px 0px'});
-  tiles.forEach(function(t,i){t.style.animationDelay=(i*.12)+'s';obs.observe(t);});
-})();
-</script>
-<script src="js/page-transition.js" defer></script>
+    <script src="js/page-transition.js" defer></script>
 </body>
 </html>
